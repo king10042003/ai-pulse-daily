@@ -131,6 +131,35 @@ Rules:
 def build_html(content: dict, affiliate_links: dict = {}) -> str:
     """Convert structured content dict → polished HTML email."""
     today = datetime.now().strftime("%B %d, %Y")
+      hero_section = f"""
+      <div style="
+      background: linear-gradient(135deg,#111827,#312e81);
+      padding:50px 30px;
+      text-align:center;
+      border-radius:10px;
+      margin-bottom:30px;
+      ">
+      
+      <h1 style="
+      color:white;
+      font-size:32px;
+      margin:0 0 15px;
+      font-family:Arial,sans-serif;
+      ">
+      AI Pulse Daily ⚡
+      </h1>
+      
+      <p style="
+      color:#d1d5db;
+      font-size:18px;
+      margin:0;
+      line-height:1.7;
+      ">
+      {content['subject_line']}
+      </p>
+      
+      </div>
+      """
     stories_html = ""
 
     for i, story in enumerate(content.get("stories", []), 1):
@@ -170,7 +199,20 @@ def build_html(content: dict, affiliate_links: dict = {}) -> str:
 <html>
 <head>
   <meta charset="UTF-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Daily AI insights for small businesses in under 3 minutes.">
+  <meta name="keywords" content="AI, artificial intelligence, automation, business AI, AI productivity">
+  <meta name="author" content="AI Pulse Daily">
+
+  <meta property="og:title" content="AI Pulse Daily ⚡">
+  <meta property="og:description" content="Daily AI insights for small businesses.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://king10042003.github.io/ai-pulse-daily/">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AI Pulse Daily ⚡">
+  <meta name="twitter:description" content="Daily AI insights for small businesses.">
   <title>{content['subject_line']}</title>
 </head>
 <body style="margin:0; padding:0; background:#f5f5f5; font-family: Georgia, 'Times New Roman', serif;">
@@ -198,6 +240,7 @@ def build_html(content: dict, affiliate_links: dict = {}) -> str:
             {content['hook']}
           </p>
         </td></tr>
+        
 
         <!-- STORIES -->
         <tr><td style="padding:0 40px;">
@@ -290,6 +333,92 @@ def publish_to_github(html_body):
 
 
 
+def generate_linkedin_post(content: dict) -> str:
+    """Generate a LinkedIn post from newsletter content."""
+
+    post = f"🚀 {content['subject_line']}\n\n"
+
+    post += f"{content['hook']}\n\n"
+
+    post += "Today's highlights:\n"
+
+    for story in content['stories'][:3]:
+        post += f"• {story['headline']}\n"
+
+    post += "\n"
+
+    post += "Read the full newsletter here:\n"
+    post += "https://king10042003.github.io/ai-pulse-daily/\n\n"
+
+    post += "#AI #Automation #SmallBusiness #Productivity #ArtificialIntelligence"
+
+    return post
+
+
+def generate_archive_page():
+
+    archive_folder = "archive"
+
+    os.makedirs(archive_folder, exist_ok=True)
+
+    files = [
+        f for f in os.listdir(archive_folder)
+        if f.endswith(".html") and f != "index.html"
+    ]
+
+    files.sort(reverse=True)
+
+    links_html = ""
+
+    for file in files:
+
+        display_name = file.replace("newsletter_", "").replace(".html", "")
+
+        links_html += f"""
+        <div style="margin-bottom:18px;">
+            <a href="{file}" style="
+            text-decoration:none;
+            color:#2563eb;
+            font-size:18px;
+            font-family:Arial,sans-serif;
+            ">
+                📅 {display_name}
+            </a>
+        </div>
+        """
+
+    archive_html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AI Pulse Daily Archive</title>
+</head>
+<body style="
+background:#f5f5f5;
+padding:40px;
+font-family:Arial,sans-serif;
+">
+
+<h1 style="font-size:40px; margin-bottom:10px;">
+AI Pulse Daily Archive
+</h1>
+
+<p style="font-size:18px; color:#555; margin-bottom:40px;">
+Browse all previous AI Pulse Daily editions.
+</p>
+
+{links_html}
+
+</body>
+</html>
+"""
+
+    with open(os.path.join(archive_folder, "index.html"), "w", encoding="utf-8") as f:
+        f.write(archive_html)
+
+    print("📚 Archive page generated.")
+
 # ─────────────────────────────────────────────
 # 6. MAIN PIPELINE
 # ─────────────────────────────────────────────
@@ -310,6 +439,14 @@ def run_pipeline():
     filepath = save_draft_locally(content, html)
     print("🌍 Publishing website...")
     publish_to_github(html)
+    generate_archive_page()
+
+    linkedin_post = generate_linkedin_post(content)
+
+    with open("linkedin_post.txt", "w", encoding="utf-8") as f:
+        f.write(linkedin_post)
+
+    print("📢 LinkedIn post generated.")
 
     print("\n" + "─" * 50)
     print(f"✅  Draft saved: {filepath}")
