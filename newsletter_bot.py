@@ -288,23 +288,6 @@ def publish_to_github(html_body):
 
     print("🌐 Website updated.")
 
-    #Git auto push
-
-    try:
-        subprocess.run(["git","add","."],check=True)
-        subprocess.run(
-            ["git","commit","-m",
-             f"Auto newsletter {datetime.now().strftime('%Y-%m-%d')}"],
-             check=True
-        )
-        
-        subprocess.run(["git","push"],check=True)
-
-        print("🚀 Auto-published to GitHub Pages!")
-
-    except Exception as e:
-        print("❌ Git publish failed:", e)
-
 
 
 # ─────────────────────────────────────────────
