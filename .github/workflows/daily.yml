@@ -1,35 +1,44 @@
-name: Daily Newsletter
+name: AI Pulse Daily
 
 on:
   schedule:
     - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
+
+    - name: Checkout Repository
       uses: actions/checkout@v4
 
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.12'
 
-    - name: Install dependencies
+    - name: Install Dependencies
       run: |
-        pip install feedparser requests google-genai
+        pip install -r requirements.txt
 
-    - name: Run newsletter bot
+    - name: Run Newsletter Bot
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      run: python generate.py
+      run: |
+        python newsletter_bot.py
 
-    - name: Commit and Push
+    - name: Commit and Push Changes
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "actions@github.com"
+
         git add .
-        git commit -m "Daily AI newsletter update" || echo "No changes"
+
+        git commit -m "Automated daily newsletter update" || echo "No changes"
+
         git push

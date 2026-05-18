@@ -14,10 +14,8 @@ from datetime import datetime
 # ─────────────────────────────────────────────
 # 1. CONFIGURATION
 # ─────────────────────────────────────────────
-GENAI_KEY   = os.environ.get("GEMINI_API_KEY", "AIzaSyCIRS1yBwAihMte2YYQkrm5RI-0qJR_t9I")
-
-client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY","AIzaSyCIRS1yBwAihMte2YYQkrm5RI-0qJR_t9I"))
-# Optional: For affiliate tracking, add your affiliate links here
+GENAI_KEY = os.environ["GEMINI_API_KEY"]
+client = genai.Client(api_key=GENAI_KEY)# Optional: For affiliate tracking, add your affiliate links here
 AFFILIATE_LINKS = {
     "notion":     "https://notion.so/?ref=YOURCODE",
     "zapier":     "https://zapier.com/?via=YOURCODE",
