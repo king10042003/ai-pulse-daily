@@ -267,8 +267,7 @@ def save_draft_locally(content: dict, html_body: str) -> str:
 import shutil
 import subprocess
 
-WEBSITE_FOLDER="website"
-
+WEBSITE_FOLDER="."
 def publish_to_github(html_body):
     os.makedirs(WEBSITE_FOLDER,exist_ok=True)
 
