@@ -131,7 +131,7 @@ Rules:
 def build_html(content: dict, affiliate_links: dict = {}) -> str:
     """Convert structured content dict → polished HTML email."""
     today = datetime.now().strftime("%B %d, %Y")
-      hero_section = f"""
+    hero_section = f"""
       <div style="
       background: linear-gradient(135deg,#111827,#312e81);
       padding:50px 30px;
